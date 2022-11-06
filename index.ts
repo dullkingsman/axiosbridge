@@ -205,26 +205,3 @@ export default {
   DEFAULT_REQUEST_TIME_OUT,
   DEFAULT_CONNECTION_TIME_OUT,
 };
-
-class APIBridge {
-  protected static bridge: Bridge = new Bridge({
-    baseURL: "<your-host-url>",
-  });
-
-  protected static _access_token: string | undefined = undefined;
-
-  static set access_token(token: string) {
-    this._access_token = token;
-    this.setAuthHeader(token);
-  }
-
-  private static setAuthHeader(token: string) {
-    this.bridge.axios_instance.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${token}`;
-
-    return this;
-  }
-}
-
-// ...
