@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Changed faulty axios import that makes any call to it fail
+
 ## 1.0.1 - 2022-11-09
 ### Added
 - Changelog

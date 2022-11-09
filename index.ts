@@ -1,4 +1,5 @@
-import axios, {
+import * as axios from "axios";
+import {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
@@ -19,10 +20,13 @@ import {
 
 // make sure that axios rejects if the response
 // status code is above 400
+// @ts-ignore
 axios.interceptors.response.use(
+  // @ts-ignore
   function (response) {
     return response;
   },
+  // @ts-ignore
   function (error) {
     Promise.reject(error);
   },
@@ -40,6 +44,7 @@ export class Bridge {
   axios_instance: AxiosInstance;
 
   constructor(config?: CreateAxiosDefaults) {
+    // @ts-ignore
     this.axios_instance = axios.create({
       timeout: DEFAULT_REQUEST_TIME_OUT,
       ...(config ? config : {}),
@@ -82,6 +87,7 @@ export class Bridge {
   private static processError<E>(err: any, abortTimeoutId?: number): E {
     if (abortTimeoutId) clearTimeout(abortTimeoutId);
 
+    // @ts-ignore
     if (axios.isAxiosError(err)) {
       const apiError = err.response?.data?.error ?? err.response?.data;
 
