@@ -19,7 +19,7 @@
   "homepage": "https://github.com/dullkingsman/axiosbridge#readme",
   "scripts": {
     "build": "rm -r lib && tsc",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "format": "prettier --write \"./**/*.ts\"",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {

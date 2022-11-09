@@ -12,7 +12,7 @@ export function convertPromiseToResult<T, E>(
   onReject?: (err: any) => E,
   onFulfill: (result: T) => T = (result: T) => result,
   config: { log: boolean } = { log: false },
-  errorConstructor?: <E>(err?: any) => E
+  errorConstructor?: <E>(err?: any) => E,
 ): Promise<Result<T, E>> {
   return _function()
     .then((result) => {
@@ -41,7 +41,7 @@ export async function execSafeAsync<T, E, F>(
     onError?: (error: E) => void;
     onNone?: () => void;
     _finally?: () => F | void;
-  }
+  },
 ): Promise<F | void> {
   const result = await _function();
 
@@ -54,8 +54,8 @@ export async function execSafeAsync<T, E, F>(
               return;
             }
           : handlers.onNone,
-        handlers.onFulfilled
-      )
+        handlers.onFulfilled,
+      ),
     );
   else if (handlers.onError) handlers.onError(result.val as E);
 
@@ -74,7 +74,7 @@ export async function execSafeAsync<T, E, F>(
 export function cleanableExec(
   _function: () => void,
   delay = 0,
-  onClean?: { handler: () => void; cleanAfter?: boolean }
+  onClean?: { handler: () => void; cleanAfter?: boolean },
 ) {
   const id = setTimeout(function () {
     _function();
@@ -103,11 +103,11 @@ export function cleanableSafeAsyncExec<T, E, F>(
     _finally?: () => F | void;
     onClean?: { handler: () => void; cleanAfter?: boolean };
   },
-  delay?: number
+  delay?: number,
 ) {
   return cleanableExec(
     () => void execSafeAsync(_function, handlers),
     delay,
-    handlers.onClean
+    handlers.onClean,
   );
 }

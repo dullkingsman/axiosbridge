@@ -25,7 +25,7 @@ axios.interceptors.response.use(
   },
   function (error) {
     Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -56,7 +56,7 @@ export class Bridge {
   }
 
   private static async process<T, E>(
-    _function: (internalConfig?: AxiosRequestConfig) => Promise<AxiosResponse>
+    _function: (internalConfig?: AxiosRequestConfig) => Promise<AxiosResponse>,
   ): Promise<Result<Option<T>, E>> {
     const controller = new AbortController();
 
@@ -68,14 +68,14 @@ export class Bridge {
       async () => {
         return Bridge.extractDataOrNone<T>(
           await _function({ signal: controller.signal }),
-          abortTimeoutId as unknown as number
+          abortTimeoutId as unknown as number,
         );
       },
       (err: any) =>
         Bridge.processError<E>(err, abortTimeoutId as unknown as number),
       undefined,
       undefined,
-      this._errorConstructor
+      this._errorConstructor,
     );
   }
 
@@ -91,7 +91,7 @@ export class Bridge {
 
   private static extractDataOrNone<T>(
     res: AxiosResponse,
-    abortTimeoutId?: number
+    abortTimeoutId?: number,
   ): Option<T> {
     if (abortTimeoutId) clearTimeout(abortTimeoutId);
 
@@ -106,14 +106,14 @@ export class Bridge {
    */
   async get<T, E>(
     route: string,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<Result<Option<T>, E>> {
     return Bridge.process(
       async (internalConfig?: AxiosRequestConfig) =>
         await this.axios_instance.get(`${route}`, {
           ...internalConfig,
           ...config,
-        })
+        }),
     );
   }
 
@@ -123,7 +123,7 @@ export class Bridge {
   async post<T, H, E>(
     route: string,
     data: T,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<Result<Option<H>, E>> {
     return Bridge.process(async (internalConfig?: AxiosRequestConfig) => {
       return await this.axios_instance.post(`${route}`, data, {
@@ -139,14 +139,14 @@ export class Bridge {
   async patch<T, H, E>(
     route: string,
     data?: T,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<Result<Option<H>, E>> {
     return Bridge.process(
       async (internalConfig?: AxiosRequestConfig) =>
         await this.axios_instance.patch(`${route}`, data, {
           ...internalConfig,
           ...config,
-        })
+        }),
     );
   }
 
@@ -156,14 +156,14 @@ export class Bridge {
   async put<T, H, E>(
     route: string,
     data?: T,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<Result<Option<H>, E>> {
     return Bridge.process(
       async (internalConfig?: AxiosRequestConfig) =>
         await this.axios_instance.put(`${route}`, data, {
           ...internalConfig,
           ...config,
-        })
+        }),
     );
   }
 
@@ -172,14 +172,14 @@ export class Bridge {
    */
   async delete<T, E>(
     route: string,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<Result<Option<T>, E>> {
     return Bridge.process(
       async (internalConfig?: AxiosRequestConfig) =>
         await this.axios_instance.delete(`${route}`, {
           ...internalConfig,
           ...config,
-        })
+        }),
     );
   }
 }
