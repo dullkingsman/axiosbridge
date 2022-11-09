@@ -1,4 +1,3 @@
-import * as axios from "axios";
 import {
   AxiosInstance,
   AxiosRequestConfig,
@@ -18,9 +17,10 @@ import {
   DEFAULT_REQUEST_TIME_OUT,
 } from "./constants";
 
+const axios = require("axios");
+
 // make sure that axios rejects if the response
 // status code is above 400
-// @ts-ignore
 axios.interceptors.response.use(
   // @ts-ignore
   function (response) {
