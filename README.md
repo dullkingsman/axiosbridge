@@ -1,6 +1,6 @@
-# AxiosBridge
-A wrapper for axios that converts `Promises` form incoming responses
-to `Result` monads.
+# axiosbridge
+A wrapper for axios that converts `Promises` from incoming responses
+to monads.
 
 <b>Usage</b>:
 

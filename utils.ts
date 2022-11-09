@@ -1,5 +1,6 @@
 import { Err, Ok, Result } from "ts-results";
-import { Option } from "ts-option";
+import { Option, match } from "fp-ts/Option";
+import { pipe } from "fp-ts/function";
 
 /**
  * Runs the provided function and if it throws
@@ -19,7 +20,7 @@ export function convertPromiseToResult<T, E>(
     })
     .catch((err) => {
       const error = !onReject
-        ? errorConstructor
+        ? !errorConstructor
           ? err
           : errorConstructor(err)
         : onReject(errorConstructor ? errorConstructor(err) : err);
@@ -45,14 +46,17 @@ export async function execSafeAsync<T, E, F>(
   const result = await _function();
 
   if (result.ok)
-    result.val.match({
-      some: handlers.onFulfilled,
-      none: !handlers.onNone
-        ? () => {
-            return;
-          }
-        : handlers.onNone,
-    });
+    pipe(
+      result.val,
+      match(
+        !handlers.onNone
+          ? () => {
+              return;
+            }
+          : handlers.onNone,
+        handlers.onFulfilled
+      )
+    );
   else if (handlers.onError) handlers.onError(result.val as E);
 
   if (handlers._finally) return handlers._finally();

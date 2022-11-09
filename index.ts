@@ -4,7 +4,7 @@ import axios, {
   AxiosResponse,
   CreateAxiosDefaults,
 } from "axios";
-import { none as None, Option, some as Some } from "ts-option";
+import { none as None, Option, some as Some } from "fp-ts/Option";
 import { Result } from "ts-results";
 import {
   cleanableExec,
