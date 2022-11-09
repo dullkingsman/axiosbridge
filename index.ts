@@ -19,19 +19,6 @@ import {
 
 const axios = require("axios");
 
-// make sure that axios rejects if the response
-// status code is above 400
-axios.interceptors.response.use(
-  // @ts-ignore
-  function (response) {
-    return response;
-  },
-  // @ts-ignore
-  function (error) {
-    Promise.reject(error);
-  },
-);
-
 /**
  * A wrapper for an axios instance that
  * converts the returned Promises in to
@@ -44,11 +31,21 @@ export class Bridge {
   axios_instance: AxiosInstance;
 
   constructor(config?: CreateAxiosDefaults) {
-    // @ts-ignore
     this.axios_instance = axios.create({
       timeout: DEFAULT_REQUEST_TIME_OUT,
       ...(config ? config : {}),
     });
+
+    // make sure that axios rejects if the response
+    // status code is above 400
+    this.axios_instance.interceptors.response.use(
+      function (response) {
+        return response;
+      },
+      function (error) {
+        Promise.reject(error);
+      },
+    );
   }
 
   private static _errorConstructor = (err?: any) =>
