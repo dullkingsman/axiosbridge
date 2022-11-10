@@ -1,6 +1,5 @@
 import { Err, Ok, Result } from "ts-results";
-import { Option, match } from "fp-ts/Option";
-import { pipe } from "fp-ts/function";
+import { Option, isNone } from "fp-ts/Option";
 
 /**
  * Runs the provided function and if it throws
@@ -44,19 +43,11 @@ export async function execSafeAsync<T, E, F>(
 ): Promise<F | void> {
   const result = await _function();
 
-  if (result.ok)
-    pipe(
-      result.val,
-      match(
-        !handlers.onNone
-          ? () => {
-              return;
-            }
-          : handlers.onNone,
-        handlers.onFulfilled,
-      ),
-    );
-  else if (handlers.onError) handlers.onError(result.val as E);
+  if (result.ok) {
+    if (isNone(result.val)) {
+      if (handlers.onNone) handlers.onNone();
+    } else handlers.onFulfilled(result.val.value);
+  } else if (handlers.onError) handlers.onError(result.val);
 
   if (handlers._finally) return handlers._finally();
 }
