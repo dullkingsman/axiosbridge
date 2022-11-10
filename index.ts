@@ -30,8 +30,13 @@ export class Bridge {
    */
   axios_instance: AxiosInstance;
 
-  constructor(config?: CreateAxiosDefaults) {
-    this.axios_instance = axios.create({
+  constructor(
+    createFunction: (config?: CreateAxiosDefaults) => AxiosInstance,
+    config?: CreateAxiosDefaults,
+  ) {
+    const create = createFunction ?? axios.create;
+
+    this.axios_instance = create({
       timeout: DEFAULT_REQUEST_TIME_OUT,
       ...(config ? config : {}),
     });
