@@ -206,6 +206,7 @@ export function processAbortController(controller?: AbortController) {
 
 export default {
   Bridge,
+  convertPromiseToResult,
   processAbortController,
   cleanableSafeAsyncExec,
   execSafeAsync,
