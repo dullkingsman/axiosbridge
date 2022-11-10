@@ -7,27 +7,26 @@ import { pipe } from "fp-ts/function";
  * an error it catches and logs then it converts
  * Promise to a Result before returning it.
  */
-export function convertPromiseToResult<T, E>(
+export async function convertPromiseToResult<T, E>(
   _function: (...args: any) => Promise<T>,
   onReject?: (err: any) => E,
   onFulfill: (result: T) => T = (result: T) => result,
   config: { log: boolean } = { log: false },
   errorConstructor?: <E>(err?: any) => E,
 ): Promise<Result<T, E>> {
-  return _function()
-    .then((result) => {
-      return Ok(onFulfill(result));
-    })
-    .catch((err) => {
-      const error = !onReject
-        ? !errorConstructor
-          ? err
-          : errorConstructor(err)
-        : onReject(errorConstructor ? errorConstructor(err) : err);
+  try {
+    const result = await _function();
+    return Ok(onFulfill(result));
+  } catch (err) {
+    const error = !onReject
+      ? !errorConstructor
+        ? err
+        : errorConstructor(err)
+      : onReject(errorConstructor ? errorConstructor(err) : err);
 
-      if (config.log) console.error(error);
-      return Err(error);
-    });
+    if (config.log) console.error(error);
+    return Err(error as E);
+  }
 }
 
 /**
