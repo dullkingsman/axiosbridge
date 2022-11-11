@@ -8,9 +8,14 @@ import { none as None, Option, some as Some } from "fp-ts/Option";
 import { Result } from "ts-results";
 import {
   cleanableExec,
+  CleanableExecOnCleanConfig,
   cleanableSafeAsyncExec,
+  CleanableSafeAsyncExecHandlers,
   convertPromiseToResult,
   execSafeAsync,
+  processAbortController,
+  PromiseToResultConverterConfig,
+  SafeAsyncExecHandlers,
 } from "./utils";
 import {
   DEFAULT_CONNECTION_TIME_OUT,
@@ -30,11 +35,26 @@ export class Bridge {
    */
   axios_instance: AxiosInstance;
 
+  /**
+   * Time before giving up on server
+   * discovery.
+   */
+  connection_timeout: number = DEFAULT_CONNECTION_TIME_OUT;
+
+  /**
+   * Creates a new axios instance with the provided
+   * configurations and default request timeout. And
+   * it sets up response interceptors to make sure it
+   * always rejects if the response is a RESTful error
+   * (Status Code `400` and `above`).
+   * @param createFunction The axios create function.
+   * @param config The axios create defaults.
+   */
   constructor(
-    createFunction: (config?: CreateAxiosDefaults) => AxiosInstance,
+    createFunction?: (config?: CreateAxiosDefaults) => AxiosInstance,
     config?: CreateAxiosDefaults,
   ) {
-    const create = createFunction ?? axios.create;
+    const create = createFunction ?? axios.create ?? axios.default.create;
 
     this.axios_instance = create({
       timeout: DEFAULT_REQUEST_TIME_OUT,
@@ -53,23 +73,41 @@ export class Bridge {
     );
   }
 
+  /**
+   * Transforms an error in to another.
+   * Forms a js Error by default.
+   * @param err The incoming error.
+   */
   private static _errorConstructor = (err?: any) =>
     (err?.message || err?.name || err?.code
       ? new Error(err.message ?? err.name ?? err?.code)
       : new Error("UNKNOWN_ERROR")) as Error | any;
 
+  /**
+   * Sets the error constructor.
+   * @param errorConstructor New error constructor
+   */
   static setErrorConstructor<E>(errorConstructor: (err?: any) => E) {
     this._errorConstructor = errorConstructor;
   }
 
+  /**
+   * Processes the request call and converts the resulting
+   * promise to a Result.
+   * @param _function The function to be processed
+   * @param connection_timeout Time before giving up on
+   * server discovery.
+   * @private
+   */
   private static async process<T, E>(
     _function: (internalConfig?: AxiosRequestConfig) => Promise<AxiosResponse>,
+    connection_timeout: number,
   ): Promise<Result<Option<T>, E>> {
     const controller = new AbortController();
 
     const abortTimeoutId = setTimeout(() => {
       controller.abort();
-    }, DEFAULT_CONNECTION_TIME_OUT);
+    }, connection_timeout);
 
     return convertPromiseToResult<Option<T>, E>(
       async () => {
@@ -86,17 +124,37 @@ export class Bridge {
     );
   }
 
+  /**
+   * Constructs a new type of error from the incoming error
+   * and cleans a request abort appointment if there is any.
+   * @param err The error the was thrown
+   * @param abortTimeoutId The id of the timeout for
+   * the request abort appointment.
+   * @private
+   */
   private static processError<E>(err: any, abortTimeoutId?: number): E {
     if (abortTimeoutId) clearTimeout(abortTimeoutId);
 
     // @ts-ignore
-    if (axios.isAxiosError(err)) {
+    if (
+      axios.isAxiosError
+        ? axios.isAxiosError(err)
+        : axios.default.isAxiosError(err)
+    ) {
       const apiError = err.response?.data?.error ?? err.response?.data;
 
       return this._errorConstructor(apiError);
     } else return this._errorConstructor(err);
   }
 
+  /**
+   * Converts the nullable data response to an Option,
+   * and cleans a request abort appointment if there is any.
+   * @param res The incoming data
+   * @param abortTimeoutId The id of the timeout for
+   * the request abort appointment.
+   * @private
+   */
   private static extractDataOrNone<T>(
     res: AxiosResponse,
     abortTimeoutId?: number,
@@ -122,6 +180,7 @@ export class Bridge {
           ...internalConfig,
           ...config,
         }),
+      this.connection_timeout,
     );
   }
 
@@ -138,7 +197,7 @@ export class Bridge {
         ...internalConfig,
         ...config,
       });
-    });
+    }, this.connection_timeout);
   }
 
   /**
@@ -155,6 +214,7 @@ export class Bridge {
           ...internalConfig,
           ...config,
         }),
+      this.connection_timeout,
     );
   }
 
@@ -172,6 +232,7 @@ export class Bridge {
           ...internalConfig,
           ...config,
         }),
+      this.connection_timeout,
     );
   }
 
@@ -188,21 +249,17 @@ export class Bridge {
           ...internalConfig,
           ...config,
         }),
+      this.connection_timeout,
     );
   }
 }
 
-/**
- * It aborts if an external controller is provided
- * and produces a new controller if not.
- */
-export function processAbortController(controller?: AbortController) {
-  if (controller && !controller?.signal.aborted) {
-    controller.abort();
-    return controller;
-  }
-  return new AbortController();
-}
+export {
+  CleanableExecOnCleanConfig,
+  SafeAsyncExecHandlers,
+  PromiseToResultConverterConfig,
+  CleanableSafeAsyncExecHandlers,
+};
 
 export default {
   Bridge,
@@ -214,3 +271,38 @@ export default {
   DEFAULT_REQUEST_TIME_OUT,
   DEFAULT_CONNECTION_TIME_OUT,
 };
+
+/**
+ * @external Option
+ * @see {@link https://gcanti.github.io/fp-ts/modules/Option.ts.html}
+ */
+
+/**
+ * @external Result
+ * @see {@link https://github.com/vultix/ts-results#readme}
+ */
+
+/**
+ * @external AbortController
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/AbortController}
+ */
+
+/**
+ * @external AxiosInstance
+ * @see {@link https://axios-http.com/docs/instance}
+ */
+
+/**
+ * @external CreateAxiosDefaults
+ * @see {@link https://axios-http.com/docs/req_config}
+ */
+
+/**
+ * @external AxiosRequestConfig
+ * @see {@link https://axios-http.com/docs/req_config}
+ */
+
+/**
+ * @external AxiosResponse
+ * @see {@link https://axios-http.com/docs/res_schema}
+ */
