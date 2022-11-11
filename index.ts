@@ -47,12 +47,12 @@ export class Bridge {
    * it sets up response interceptors to make sure it
    * always rejects if the response is a RESTful error
    * (Status Code `400` and `above`).
-   * @param createFunction The axios create function.
    * @param config The axios create defaults.
+   * @param createFunction The axios create function.
    */
   constructor(
-    createFunction?: (config?: CreateAxiosDefaults) => AxiosInstance,
     config?: CreateAxiosDefaults,
+    createFunction?: (config?: CreateAxiosDefaults) => AxiosInstance,
   ) {
     const create = createFunction ?? axios.create ?? axios.default.create;
 
