@@ -6,11 +6,12 @@ into `Monads`.
 <b>Usage</b>:
 
 ```typescript
+import axios from "axios";
 import axiosbridge from "axiosbridge";
 
 const bridge = new axiosbridge.Bridge({
   baseURL: "https://www.google.com",
-});
+}, axios);
 
 (async () => await axiosbridge.execSafeAsync(
   async () => bridge.get("/"),

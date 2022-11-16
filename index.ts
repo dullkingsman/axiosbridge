@@ -1,7 +1,8 @@
-import {
+import _axios, {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
+  AxiosStatic,
   CreateAxiosDefaults,
 } from "axios";
 import { none as None, Option, some as Some } from "fp-ts/Option";
@@ -22,14 +23,17 @@ import {
   DEFAULT_REQUEST_TIME_OUT,
 } from "./constants";
 
-const axios = require("axios");
-
 /**
  * A wrapper for an axios instance that
  * converts the returned Promises in to
  * Results when a request is made.
  */
 export class Bridge {
+  /**
+   * The axios default exported object.
+   */
+  static axios_static: AxiosStatic = _axios;
+
   /**
    * Main axios instance to be used for all requests
    */
@@ -48,15 +52,12 @@ export class Bridge {
    * always rejects if the response is a RESTful error
    * (Status Code `400` and `above`).
    * @param config The axios create defaults.
-   * @param createFunction The axios create function.
+   * @param axios The axios default exported object.
    */
-  constructor(
-    config?: CreateAxiosDefaults,
-    createFunction?: (config?: CreateAxiosDefaults) => AxiosInstance,
-  ) {
-    const create = createFunction ?? axios.create ?? axios.default.create;
+  constructor(config?: CreateAxiosDefaults, axios?: AxiosStatic) {
+    if (axios) Bridge.axios_static = axios;
 
-    this.axios_instance = create({
+    this.axios_instance = Bridge.axios_static.create({
       timeout: DEFAULT_REQUEST_TIME_OUT,
       ...(config ? config : {}),
     });
@@ -135,12 +136,7 @@ export class Bridge {
   private static processError<E>(err: any, abortTimeoutId?: number): E {
     if (abortTimeoutId) clearTimeout(abortTimeoutId);
 
-    // @ts-ignore
-    if (
-      axios.isAxiosError
-        ? axios.isAxiosError(err)
-        : axios.default.isAxiosError(err)
-    ) {
+    if (Bridge.axios_static.isAxiosError(err)) {
       const apiError = err.response?.data?.error ?? err.response?.data;
 
       return this._errorConstructor(apiError);
@@ -271,38 +267,3 @@ export default {
   DEFAULT_REQUEST_TIME_OUT,
   DEFAULT_CONNECTION_TIME_OUT,
 };
-
-/**
- * @external Option
- * @see {@link https://gcanti.github.io/fp-ts/modules/Option.ts.html}
- */
-
-/**
- * @external Result
- * @see {@link https://github.com/vultix/ts-results#readme}
- */
-
-/**
- * @external AbortController
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/AbortController}
- */
-
-/**
- * @external AxiosInstance
- * @see {@link https://axios-http.com/docs/instance}
- */
-
-/**
- * @external CreateAxiosDefaults
- * @see {@link https://axios-http.com/docs/req_config}
- */
-
-/**
- * @external AxiosRequestConfig
- * @see {@link https://axios-http.com/docs/req_config}
- */
-
-/**
- * @external AxiosResponse
- * @see {@link https://axios-http.com/docs/res_schema}
- */
