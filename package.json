@@ -1,6 +1,6 @@
 {
   "name": "axiosbridge",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A RESTful specific wrapper for axios.",
   "author": "The_C1oud <50553458+dullkingsman@users.noreply.github.com>",
   "main": "lib/index.js",
