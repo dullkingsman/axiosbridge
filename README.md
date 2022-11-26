@@ -88,7 +88,7 @@ Results when a request is made.
 ### Parameters
 
 *   `config` **[CreateAxiosDefaults](#createaxiosdefaults)?** The axios create defaults.
-*   `createFunction` **function (config: [CreateAxiosDefaults](#createaxiosdefaults)): [AxiosInstance](#axiosinstance)?** The axios create function.
+*   `axios` **[AxiosStatic](#axiosstatic)?** The axios default exported object.
 
 ### axios\_instance
 
@@ -397,3 +397,7 @@ Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 ## AxiosResponse
 
 *   **See**: <https://axios-http.com/docs/res_schema>
+
+## AxiosStatic
+
+*   **See**: <https://axios-http.com/docs/api_intro>

@@ -137,7 +137,8 @@ export class Bridge {
     if (abortTimeoutId) clearTimeout(abortTimeoutId);
 
     if (Bridge.axios_static.isAxiosError(err)) {
-      const apiError = err.response?.data?.error ?? err.response?.data;
+      const apiError =
+        err.response?.data?.error ?? err.response?.data ?? err.request ?? err;
 
       return this._errorConstructor(apiError);
     } else return this._errorConstructor(err);
