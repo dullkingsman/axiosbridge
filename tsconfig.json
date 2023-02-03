@@ -2,9 +2,10 @@
     "compilerOptions": {
         "target": "ES2022",
         "module": "commonjs",
+        "moduleResolution": "node",
         "declaration": true,
         "outDir": "./lib",
-        "strict": true,
+        "strict": true
     },
     "exclude": ["node_modules"]
 }

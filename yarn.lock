@@ -1400,6 +1400,11 @@ run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
+rustic@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/rustic/-/rustic-1.2.2.tgz#7b853bccbf0daa6e88d27d7e10aa1909c9bab73f"
+  integrity sha512-aagYrcImcYj3QbaP7nirOw8/q8aULMu0LkKucP9B4WsRbXlXpk195nYAEB+uJzAcgk2pKS+yMzbAJtIoOqwZoQ==
+
 safe-regex-test@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/safe-regex-test/-/safe-regex-test-1.0.0.tgz#793b874d524eb3640d1873aad03596db2d4f2295"
@@ -1531,11 +1536,6 @@ to-regex-range@^5.0.1:
   integrity sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==
   dependencies:
     is-number "^7.0.0"
-
-ts-results@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/ts-results/-/ts-results-3.3.0.tgz#68623a6c18e65556287222dab76498a28154922f"
-  integrity sha512-FWqxGX2NHp5oCyaMd96o2y2uMQmSu8Dey6kvyuFdRJ2AzfmWo3kWa4UsPlCGlfQ/qu03m09ZZtppMoY8EMHuiA==
 
 tsconfig-paths@^3.14.1:
   version "3.14.1"

@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "ts-results/esm";
+import { Err, isOk, Ok, Result } from "rustic";
 import { Option, isNone } from "fp-ts/Option";
 
 /**
@@ -47,11 +47,11 @@ export async function execSafeAsync<T, E, F>(
 ): Promise<F | void> {
   const result = await _function();
 
-  if (result.ok) {
-    if (isNone(result.val)) {
+  if (isOk(result)) {
+    if (isNone(result.data)) {
       if (handlers.onNone) handlers.onNone();
-    } else handlers.onFulfilled(result.val.value);
-  } else if (handlers.onError) handlers.onError(result.val);
+    } else handlers.onFulfilled(result.data.value);
+  } else if (handlers.onError) handlers.onError(result.data);
 
   if (handlers._finally) return handlers._finally();
 }

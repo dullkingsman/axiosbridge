@@ -6,7 +6,7 @@ import _axios, {
   CreateAxiosDefaults,
 } from "axios";
 import { none as None, Option, some as Some } from "fp-ts/Option";
-import { Result } from "ts-results/esm";
+import { Result } from "rustic";
 import {
   cleanableExec,
   CleanableExecOnCleanConfig,
