@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "ts-results";
+import { Err, Ok, Result } from "ts-results/esm";
 import { Option, isNone } from "fp-ts/Option";
 
 /**
@@ -27,7 +27,7 @@ export async function convertPromiseToResult<T, E>(
       ? !errorConstructor
         ? err
         : errorConstructor(err)
-      : onReject(errorConstructor ? errorConstructor(err) : err);
+      : onReject(err);
 
     if (config.logErrors) console.error(error);
     return Err(error as E);

@@ -6,7 +6,7 @@ import _axios, {
   CreateAxiosDefaults,
 } from "axios";
 import { none as None, Option, some as Some } from "fp-ts/Option";
-import { Result } from "ts-results";
+import { Result } from "ts-results/esm";
 import {
   cleanableExec,
   CleanableExecOnCleanConfig,
@@ -69,7 +69,7 @@ export class Bridge {
         return response;
       },
       function (error) {
-        Promise.reject(error);
+        return Promise.reject(error);
       },
     );
   }
@@ -140,7 +140,10 @@ export class Bridge {
       const apiError =
         err.response?.data?.error ?? err.response?.data ?? err.request ?? err;
 
-      return this._errorConstructor(apiError);
+      return this._errorConstructor({
+        ...(apiError ? apiError : {}),
+        status: err.response?.status,
+      });
     } else return this._errorConstructor(err);
   }
 
