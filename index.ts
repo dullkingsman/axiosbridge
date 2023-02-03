@@ -161,8 +161,7 @@ export class Bridge {
   ): Option<T> {
     if (abortTimeoutId) clearTimeout(abortTimeoutId);
 
-    if (res.data && (res.status === 201 || res.status === 200))
-      return Some(!res.data.data ? res.data : res.data.data);
+    if (res.data && res.status !== 204) return Some(res.data);
 
     return None;
   }
